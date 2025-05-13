@@ -60,15 +60,15 @@ base_model = tf.keras.applications.ResNet50(
         )
 x = layers.GlobalAveragePooling2D()(base_model.output)
 
-# Add a fully connected layer with a sigmoid activation for binary classification
-predictions = layers.Dense(class_count, activation='sigmoid')(x)
+# Add a fully connected layer with a softmax activation for multi-class classification
+predictions = layers.Dense(class_count, activation='softmax')(x)
 
 # Create the final model
 model = Model(inputs=base_model.input, outputs=predictions)
 
 model.compile(
     optimizer='adam',
-    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
     metrics=['accuracy']
 )
 model.summary()
