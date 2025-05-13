@@ -5,7 +5,7 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="TransferLearningTask", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="NormalizationTask", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -47,6 +47,11 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
   image_size=(params['img_height'], params['img_width']),
   batch_size=params['batch_size'])
 
+# Normalization layer from 0,255 to 0,1
+normalization_layer = tf.keras.layers.Rescaling(1./255)
+train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
+val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
+
 # Get the class names
 class_names = train_ds.class_names
 class_count = len(class_names)
@@ -60,15 +65,15 @@ base_model = tf.keras.applications.ResNet50(
         )
 x = layers.GlobalAveragePooling2D()(base_model.output)
 
-# Add a fully connected layer with a sigmoid activation for binary classification
-predictions = layers.Dense(class_count, activation='sigmoid')(x)
+# Add a fully connected layer with a softmax activation for multi-class classification
+predictions = layers.Dense(class_count, activation='softmax')(x)
 
 # Create the final model
 model = Model(inputs=base_model.input, outputs=predictions)
 
 model.compile(
     optimizer='adam',
-    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
     metrics=['accuracy']
 )
 model.summary()
