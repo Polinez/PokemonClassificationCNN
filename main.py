@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import time
 
 from clearml import Task, Dataset
-task = Task.init(project_name="PokemonClassification", task_name="BaseTask", output_uri=True)
+from keras import layers, Model
+
+task = Task.init(project_name="PokemonClassification", task_name="TransferLearningTask", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -14,13 +16,12 @@ if (useCPU == True):
 else:
     gpu_devices = tf.config.list_physical_devices('GPU')
     tf.config.set_visible_devices(gpu_devices, 'GPU') # use GPU
-    tf.config.experimental.set_memory_growth(gpu_devices[0], True)
     print("Aviable devides:", tf.config.get_visible_devices())
 
 
 # Load the dataset from clearml
 #dataPath = "dataFixed"
-dataPath = Dataset.get(dataset_id="6c51efba949342ee90e21e644e04d45f").get_local_copy()
+dataPath = Dataset.get(dataset_id="13db2337377344489645212c8c30ca17").get_local_copy()
 
 # Set the parameters
 params = {'batch_size': 16,# liczba obrazow na raz
@@ -52,14 +53,22 @@ class_count = len(class_names)
 print(class_names)
 
 # prepering model
-model = tf.keras.applications.ResNet50(
-    weights=None,
-    input_shape=(params['img_height'], params['img_width'], 3),
-    classes=class_count
-)
+base_model = tf.keras.applications.ResNet50(
+            include_top=False,
+            input_shape=(params['img_height'], params['img_width'], 3),
+            classes=class_count,
+        )
+x = layers.GlobalAveragePooling2D()(base_model.output)
+
+# Add a fully connected layer with a sigmoid activation for binary classification
+predictions = layers.Dense(class_count, activation='sigmoid')(x)
+
+# Create the final model
+model = Model(inputs=base_model.input, outputs=predictions)
+
 model.compile(
     optimizer='adam',
-    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
     metrics=['accuracy']
 )
 model.summary()

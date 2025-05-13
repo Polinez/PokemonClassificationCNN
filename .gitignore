@@ -1,3 +1,6 @@
 /.idea
 fixImage.py
 splitData.py
+/Data80
+/removedData
+spliterData.py
