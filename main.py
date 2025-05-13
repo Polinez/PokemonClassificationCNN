@@ -53,15 +53,12 @@ class_names = train_ds.class_names
 class_count = len(class_names)
 print(class_names)
 
-# Normalization layer from 0,255 to 0,1
-normalization_layer = tf.keras.layers.Rescaling(1./255)
-train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
-val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
 
 # Augmentation layer
 data_augmentation = tf.keras.Sequential([
-    layers.RandomFlip("horizontal_and_vertical"),
-    layers.RandomRotation(0.2),
+    layers.RandomFlip("horizontal"),  # horizontal flip
+    layers.RandomRotation(0.05),  # 18 degrees
+    layers.RandomZoom(0.1),  # zoom
 ])
 train_ds = train_ds.map(lambda x, y: (data_augmentation(x), y))
 val_ds = val_ds.map(lambda x, y: (x, y))
