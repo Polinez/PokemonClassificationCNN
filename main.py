@@ -5,7 +5,7 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="TransferLearningTask", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="AdditionalDataTask", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -21,7 +21,7 @@ else:
 
 # Load the dataset from clearml
 #dataPath = "dataFixed"
-dataPath = Dataset.get(dataset_id="13db2337377344489645212c8c30ca17").get_local_copy()
+dataPath = Dataset.get(dataset_id="1f6992f5e7654b66a05786e7b19b4665").get_local_copy()
 
 # Set the parameters
 params = {'batch_size': 16,# liczba obrazow na raz
@@ -60,15 +60,15 @@ base_model = tf.keras.applications.ResNet50(
         )
 x = layers.GlobalAveragePooling2D()(base_model.output)
 
-# Add a fully connected layer with a sigmoid activation for binary classification
-predictions = layers.Dense(class_count, activation='sigmoid')(x)
+# Add a fully connected layer with a softmax activation for multi-class classification
+predictions = layers.Dense(class_count, activation='softmax')(x)
 
 # Create the final model
 model = Model(inputs=base_model.input, outputs=predictions)
 
 model.compile(
     optimizer='adam',
-    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
     metrics=['accuracy']
 )
 model.summary()
