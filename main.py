@@ -5,7 +5,7 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="NormalizationTask", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="AugmentationTask", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -57,6 +57,15 @@ print(class_names)
 normalization_layer = tf.keras.layers.Rescaling(1./255)
 train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
 val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
+
+# Augmentation layer
+data_augmentation = tf.keras.Sequential([
+    layers.RandomFlip("horizontal_and_vertical"),
+    layers.RandomRotation(0.2),
+])
+train_ds = train_ds.map(lambda x, y: (data_augmentation(x), y))
+val_ds = val_ds.map(lambda x, y: (data_augmentation(x), y))
+
 
 # prepering model
 base_model = tf.keras.applications.ResNet50(
