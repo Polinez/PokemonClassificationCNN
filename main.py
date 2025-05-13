@@ -5,7 +5,7 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="TransferLearningTask", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="64Task", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -24,9 +24,9 @@ else:
 dataPath = Dataset.get(dataset_id="13db2337377344489645212c8c30ca17").get_local_copy()
 
 # Set the parameters
-params = {'batch_size': 16,# liczba obrazow na raz
-          'img_height': 128,# rozmiar obrazu po skalowaniu
-          'img_width': 128,
+params = {'batch_size': 32,# liczba obrazow na raz
+          'img_height': 96,# rozmiar obrazu po skalowaniu
+          'img_width': 96,
           'epochs': 15}
 task.connect(params)
 
