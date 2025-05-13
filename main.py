@@ -47,15 +47,16 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
   image_size=(params['img_height'], params['img_width']),
   batch_size=params['batch_size'])
 
-# Normalization layer from 0,255 to 0,1
-normalization_layer = tf.keras.layers.Rescaling(1./255)
-train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
-val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
 
 # Get the class names
 class_names = train_ds.class_names
 class_count = len(class_names)
 print(class_names)
+
+# Normalization layer from 0,255 to 0,1
+normalization_layer = tf.keras.layers.Rescaling(1./255)
+train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
+val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
 
 # prepering model
 base_model = tf.keras.applications.ResNet50(
