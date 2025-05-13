@@ -64,8 +64,7 @@ data_augmentation = tf.keras.Sequential([
     layers.RandomRotation(0.2),
 ])
 train_ds = train_ds.map(lambda x, y: (data_augmentation(x), y))
-val_ds = val_ds.map(lambda x, y: (data_augmentation(x), y))
-
+val_ds = val_ds.map(lambda x, y: (x, y))
 
 # prepering model
 base_model = tf.keras.applications.ResNet50(
