@@ -5,7 +5,7 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="AugmentationTask", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="DropoutTask", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -53,15 +53,25 @@ class_names = train_ds.class_names
 class_count = len(class_names)
 print(class_names)
 
+# # Normalization layer from 0,255 to 0,1
+# normalization_layer = tf.keras.layers.Rescaling(1./255)
+# train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
+# val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
 
-# Augmentation layer
-data_augmentation = tf.keras.Sequential([
-    layers.RandomFlip("horizontal"),  # horizontal flip
-    layers.RandomRotation(0.05),  # 18 degrees
-    layers.RandomZoom(0.1),  # zoom
-])
-train_ds = train_ds.map(lambda x, y: (data_augmentation(x), y))
-val_ds = val_ds.map(lambda x, y: (x, y))
+# # Augmentation layer
+# data_augmentation = tf.keras.Sequential([
+#     layers.RandomFlip("horizontal"),  # horizontal flip
+#     layers.RandomRotation(0.05),  # 18 degrees
+#     layers.RandomZoom(0.1),  # zoom
+# ])
+# train_ds = train_ds.map(lambda x, y: (data_augmentation(x), y))
+# val_ds = val_ds.map(lambda x, y: (x, y))
+
+# Dropout layer
+dropout_layer = layers.Dropout(0.2)
+train_ds = train_ds.map(lambda x, y: (dropout_layer(x), y))
+val_ds = val_ds.map(lambda x, y: (dropout_layer(x), y))
+
 
 # prepering model
 base_model = tf.keras.applications.ResNet50(
