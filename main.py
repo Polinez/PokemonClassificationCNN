@@ -53,18 +53,11 @@ class_count = len(class_names)
 print(class_names)
 
 # prepering model
-base_model = tf.keras.applications.ResNet50(
-            include_top=False,
-            input_shape=(params['img_height'], params['img_width'], 3),
-            classes=class_count,
-        )
-x = layers.GlobalAveragePooling2D()(base_model.output)
-
-# Add a fully connected layer with a softmax activation for multi-class classification
-predictions = layers.Dense(class_count, activation='softmax')(x)
-
-# Create the final model
-model = Model(inputs=base_model.input, outputs=predictions)
+model = tf.keras.applications.ResNet50(
+    weights=None,
+    input_shape=(params['img_height'], params['img_width'], 3),
+    classes=class_count
+)
 
 model.compile(
     optimizer='adam',
