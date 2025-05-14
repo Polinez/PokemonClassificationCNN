@@ -5,12 +5,12 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="BaseTask", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="GPUTask", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
 
-if (useCPU == True):
+if (useCPU == False):
     tf.config.set_visible_devices([], 'GPU')  # hide GPU
     print("Aviable devides:", tf.config.get_visible_devices())
 else:
