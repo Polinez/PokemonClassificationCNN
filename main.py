@@ -5,7 +5,7 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="ResNet101", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="MobileNetTask", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -53,7 +53,7 @@ class_count = len(class_names)
 print(class_names)
 
 # prepering model
-model = tf.keras.applications.ResNet101(
+model = tf.keras.applications.MobileNet(
     weights=None,
     input_shape=(params['img_height'], params['img_width'], 3),
     classes=class_count
