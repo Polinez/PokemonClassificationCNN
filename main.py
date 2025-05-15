@@ -5,7 +5,7 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="MobileNetTask", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="InceptionV3Task", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -53,11 +53,19 @@ class_count = len(class_names)
 print(class_names)
 
 # prepering model
-model = tf.keras.applications.MobileNet(
+base_model = tf.keras.applications.InceptionV3(
     weights=None,
-    input_shape=(params['img_height'], params['img_width'], 3),
-    classes=class_count
+    include_top=False,
+    input_shape=(params['img_height'], params['img_width'], 3)
 )
+
+# added end layers
+x = base_model.output
+x = tf.keras.layers.GlobalAveragePooling2D()(x)
+x = tf.keras.layers.Dense(class_count, activation='softmax')(x)
+
+model = tf.keras.models.Model(inputs=base_model.input, outputs=x)
+
 
 model.compile(
     optimizer='adam',
