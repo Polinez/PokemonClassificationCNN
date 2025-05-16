@@ -5,7 +5,7 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="BaseTask", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="OptHiperparTask", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -28,6 +28,10 @@ params = {'batch_size': 16,# liczba obrazow na raz
           'img_height': 128,# rozmiar obrazu po skalowaniu
           'img_width': 128,
           'epochs': 15}
+# Download parameters from clearml
+task_params = task.get_parameters()
+# update the parameters
+params.update(task_params.get('General', {}))
 task.connect(params)
 
 # split the data
