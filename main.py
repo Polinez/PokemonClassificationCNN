@@ -18,17 +18,16 @@ else:
     tf.config.set_visible_devices(gpu_devices, 'GPU') # use GPU
     print("Aviable devides:", tf.config.get_visible_devices())
 
-
-# Load the dataset from clearml
-#dataPath = "dataFixed"
-dataPath = Dataset.get(dataset_id="13db2337377344489645212c8c30ca17").get_local_copy()
-
 # Set the parameters
 params = {'batch_size': 16,# liczba obrazow na raz
           'img_height': 128,# rozmiar obrazu po skalowaniu
           'img_width': 128,
-          'epochs': 15}
+          'epochs': 15,
+          'dataset_id': '30d19f9836934ab9902e73188471df13'}
 task.connect(params)
+
+# Load the dataset from clearml
+dataPath = Dataset.get(dataset_id=params['dataset_id']).get_local_copy()
 
 # split the data
 train_ds = tf.keras.utils.image_dataset_from_directory(
@@ -53,19 +52,6 @@ class_names = train_ds.class_names
 class_count = len(class_names)
 print(class_names)
 
-# # Normalization layer from 0,255 to 0,1
-# normalization_layer = tf.keras.layers.Rescaling(1./255)
-# train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
-# val_ds = val_ds.map(lambda x, y: (normalization_layer(x), y))
-
-# # Augmentation layer
-# data_augmentation = tf.keras.Sequential([
-#     layers.RandomFlip("horizontal"),  # horizontal flip
-#     layers.RandomRotation(0.05),  # 18 degrees
-#     layers.RandomZoom(0.1),  # zoom
-# ])
-# train_ds = train_ds.map(lambda x, y: (data_augmentation(x), y))
-# val_ds = val_ds.map(lambda x, y: (x, y))
 
 # Dropout layer
 dropout_layer = layers.Dropout(0.2)
