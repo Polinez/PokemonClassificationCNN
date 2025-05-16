@@ -21,7 +21,7 @@ else:
 
 # Load the dataset from clearml
 #dataPath = "dataFixed"
-dataPath = Dataset.get(dataset_id="13db2337377344489645212c8c30ca17").get_local_copy()
+dataPath = Dataset.get(dataset_id="30d19f9836934ab9902e73188471df13").get_local_copy()
 
 # Set the parameters
 params = {'batch_size': 16,# liczba obrazow na raz
