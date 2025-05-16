@@ -55,19 +55,19 @@ print(class_names)
 
 
 # prepering model
-base_model = tf.keras.applications.ResNet50(
+model = tf.keras.applications.ResNet50(
     weights=None,
     input_shape=(params['img_height'], params['img_width'], 3),
     include_top=False
 )
 
 # dropout layer
-x = base_model.output
+x = model.output
 x = layers.GlobalAveragePooling2D()(x)
-x = layers.Dropout(0.5)(x)             
+x = layers.Dropout(0.5)(x)
 predictions = layers.Dense(class_count, activation='softmax')(x)
 
-model = Model(inputs=base_model.input, outputs=predictions)
+model = Model(inputs=model.input, outputs=predictions)
 
 model.compile(
     optimizer='adam',
