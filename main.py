@@ -10,7 +10,7 @@ task = Task.init(project_name="PokemonClassification", task_name="GPUTask", outp
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
 
-if (useCPU == False):
+if (useCPU == True):
     tf.config.set_visible_devices([], 'GPU')  # hide GPU
     print("Aviable devides:", tf.config.get_visible_devices())
 else:
