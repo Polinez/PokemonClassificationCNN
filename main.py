@@ -5,7 +5,7 @@ import time
 from clearml import Task, Dataset
 from keras import layers, Model
 
-task = Task.init(project_name="PokemonClassification", task_name="Task", output_uri=True)
+task = Task.init(project_name="PokemonClassification", task_name="160x160Task", output_uri=True)
 
 # set lerning on GPU/CPU
 useCPU = True  # 'CPU' or 'GPU'
@@ -19,16 +19,16 @@ else:
     print("Aviable devides:", tf.config.get_visible_devices())
 
 
-# Load the dataset from clearml
-#dataPath = "dataFixed"
-dataPath = Dataset.get(dataset_id="13db2337377344489645212c8c30ca17").get_local_copy()
-
 # Set the parameters
-params = {'batch_size': 32,# liczba obrazow na raz
-          'img_height': 96,# rozmiar obrazu po skalowaniu
-          'img_width': 96,
-          'epochs': 15}
+params = {'batch_size': 16,# liczba obrazow na raz
+          'img_height': 160,# rozmiar obrazu po skalowaniu
+          'img_width': 160,
+          'epochs': 15,
+          'dataset_id': '30d19f9836934ab9902e73188471df13'}
 task.connect(params)
+
+# Load the dataset from clearml
+dataPath = Dataset.get(dataset_id=params['dataset_id']).get_local_copy()
 
 # split the data
 train_ds = tf.keras.utils.image_dataset_from_directory(
