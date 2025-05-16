@@ -8,7 +8,7 @@ from keras import layers, Model
 task = Task.init(project_name="PokemonClassification", task_name="GPUTask", output_uri=True)
 
 # set lerning on GPU/CPU
-useCPU = True  # 'CPU' or 'GPU'
+useCPU = False  # 'CPU' or 'GPU'
 
 if (useCPU == True):
     tf.config.set_visible_devices([], 'GPU')  # hide GPU
