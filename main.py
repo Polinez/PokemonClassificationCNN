@@ -19,16 +19,16 @@ else:
     print("Aviable devides:", tf.config.get_visible_devices())
 
 
-# Load the dataset from clearml
-#dataPath = "dataFixed"
-dataPath = Dataset.get(dataset_id="1f6992f5e7654b66a05786e7b19b4665").get_local_copy()
-
 # Set the parameters
 params = {'batch_size': 16,# liczba obrazow na raz
           'img_height': 128,# rozmiar obrazu po skalowaniu
           'img_width': 128,
-          'epochs': 15}
+          'epochs': 15,
+          'dataset_id': 'f95f8e0c86ef415ba040ee9fcc78b776'}
 task.connect(params)
+
+# Load the dataset from clearml
+dataPath = Dataset.get(dataset_id=params['dataset_id']).get_local_copy()
 
 # split the data
 train_ds = tf.keras.utils.image_dataset_from_directory(
