@@ -1,5 +1,6 @@
 import tensorflow as tf
 import time
+import matplotlib.pyplot as plt
 
 from clearml import Task, Dataset
 from keras import layers, Model
@@ -100,3 +101,27 @@ for epoch, (acc, val_acc, loss, val_loss) in enumerate(zip(history.history['accu
 print(f"\nValidation Accuracy: {val_accuracy * 100:.2f}%")
 
 print(f"\nTotal training time: {training_time:.2f} seconds")
+
+
+acc = history.history['accuracy']
+val_acc = history.history['val_accuracy']
+
+loss = history.history['loss']
+val_loss = history.history['val_loss']
+
+epochs_range = range(params["epochs"])
+
+plt.figure(figsize=(8, 8))
+plt.subplot(1, 2, 1)
+plt.plot(epochs_range, acc, label='Training Accuracy')
+plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+plt.legend(loc='lower right')
+plt.title('Training and Validation Accuracy')
+
+plt.subplot(1, 2, 2)
+plt.plot(epochs_range, loss, label='Training Loss')
+plt.plot(epochs_range, val_loss, label='Validation Loss')
+plt.legend(loc='upper right')
+plt.title('Training and Validation Loss')
+plt.show()
+
