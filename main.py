@@ -53,18 +53,21 @@ class_count = len(class_names)
 print(class_names)
 
 
-# Dropout layer
-dropout_layer = layers.Dropout(0.2)
-train_ds = train_ds.map(lambda x, y: (dropout_layer(x), y))
-val_ds = val_ds.map(lambda x, y: (dropout_layer(x), y))
-
 
 # prepering model
-model = tf.keras.applications.ResNet50(
+base_model = tf.keras.applications.ResNet50(
     weights=None,
     input_shape=(params['img_height'], params['img_width'], 3),
-    classes=class_count
+    include_top=False
 )
+
+# dropout layer
+x = base_model.output
+x = layers.GlobalAveragePooling2D()(x)
+x = layers.Dropout(0.5)(x)             
+predictions = layers.Dense(class_count, activation='softmax')(x)
+
+model = Model(inputs=base_model.input, outputs=predictions)
 
 model.compile(
     optimizer='adam',
