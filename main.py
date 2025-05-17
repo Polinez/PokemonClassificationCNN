@@ -19,16 +19,16 @@ else:
     print("Aviable devides:", tf.config.get_visible_devices())
 
 
-# Load the dataset from clearml
-#dataPath = "dataFixed"
-dataPath = Dataset.get(dataset_id="13db2337377344489645212c8c30ca17").get_local_copy()
-
 # Set the parameters
 params = {'batch_size': 16,# liczba obrazow na raz
           'img_height': 128,# rozmiar obrazu po skalowaniu
           'img_width': 128,
-          'epochs': 15}
+          'epochs': 15,
+          'dataset_id': '30d19f9836934ab9902e73188471df13'}
 task.connect(params)
+
+# Load the dataset from clearml
+dataPath = Dataset.get(dataset_id=params['dataset_id']).get_local_copy()
 
 # split the data
 train_ds = tf.keras.utils.image_dataset_from_directory(
@@ -53,18 +53,12 @@ class_count = len(class_names)
 print(class_names)
 
 # prepering model
-base_model = tf.keras.applications.InceptionV3(
+model = tf.keras.applications.InceptionV3(
     weights=None,
-    include_top=False,
-    input_shape=(params['img_height'], params['img_width'], 3)
+    input_shape=(params['img_height'], params['img_width'], 3),
+    classes = class_count,
 )
 
-# added end layers
-x = base_model.output
-x = tf.keras.layers.GlobalAveragePooling2D()(x)
-x = tf.keras.layers.Dense(class_count, activation='softmax')(x)
-
-model = tf.keras.models.Model(inputs=base_model.input, outputs=x)
 
 
 model.compile(
